@@ -13,8 +13,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
-    <ProjectReference Include="..\..\src/WexCurrencyConverter.Infrastructure/WexCurrencyConverter.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+      <ProjectReference Include="..\..\src/WexCurrencyConverter.Infrastructure/WexCurrencyConverter.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\src/WexCurrencyConverter.Application/WexCurrencyConverter.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using WexCurrencyConverter.Api.Middleware;
 using WexCurrencyConverter.Application.Abstractions.Interfaces;
 using WexCurrencyConverter.Application.Services;
+using WexCurrencyConverter.Infrastructure.ExternalServices;
 using WexCurrencyConverter.Infrastructure.Persistence;
 using WexCurrencyConverter.Infrastructure.Persistence.Repositories;
 
@@ -23,6 +25,27 @@ builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddDbContext<PurchaseDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services
+    .AddOptions<TreasuryRatesOptions>()
+    .BindConfiguration(TreasuryRatesOptions.SectionName)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+var treasuryOptions = builder.Configuration
+    .GetSection(TreasuryRatesOptions.SectionName)
+    .Get<TreasuryRatesOptions>() ?? new TreasuryRatesOptions();
+
+builder.Services
+    .AddHttpClient<ITreasuryRatesClient, TreasuryRatesClient>((serviceProvider, c) =>
+    {
+        c.BaseAddress = new Uri(treasuryOptions.BaseAddress);
+        c.Timeout = TimeSpan.FromSeconds(treasuryOptions.TimeoutSeconds);
+    })
+    .AddStandardResilienceHandler(o =>
+    {
+        o.Retry.MaxRetryAttempts = treasuryOptions.RetryCount;
+    });
+
 builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
 var app = builder.Build();
@@ -31,7 +54,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PurchaseDbContext>();
-    
+
     if (db.Database.IsRelational())    // Only run migrations for Sqlite (Integration Testing)
         db.Database.Migrate();
 }
@@ -50,5 +73,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-public partial class Program { }
