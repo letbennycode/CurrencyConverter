@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using WexCurrencyConverter.Application.Purchases;
+using WexCurrencyConverter.Application.Abstractions.Interfaces;
 using WexCurrencyConverter.Domain.Purchases;
 using WexCurrencyConverter.Infrastructure.Persistence;
 
-namespace WexCurrencyConverter.Infrastructure.Purchases;
+namespace WexCurrencyConverter.Infrastructure.Persistence.Repositories;
 
 public class PurchaseRepository : IPurchaseRepository
 {

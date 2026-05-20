@@ -1,35 +1,50 @@
-using WexCurrencyConverter.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using WexCurrencyConverter.Api.Middleware;
+using WexCurrencyConverter.Application.Abstractions.Interfaces;
+using WexCurrencyConverter.Application.Services;
+using WexCurrencyConverter.Infrastructure.Persistence;
+using WexCurrencyConverter.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// --- Controllers ---
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
+// --- Exception Handling ---
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+// --- Application ---
+builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+
+// --- Infrastructure ---
 builder.Services.AddDbContext<PurchaseDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+
 var app = builder.Build();
 
+// --- Database Migration ---
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PurchaseDbContext>();
     db.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
+// --- Middleware Pipeline ---
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

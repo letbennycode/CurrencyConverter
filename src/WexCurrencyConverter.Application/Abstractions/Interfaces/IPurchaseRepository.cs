@@ -1,6 +1,6 @@
 using WexCurrencyConverter.Domain.Purchases;
 
-namespace WexCurrencyConverter.Application.Purchases;
+namespace WexCurrencyConverter.Application.Abstractions.Interfaces;
 
 public interface IPurchaseRepository
 {
