@@ -39,6 +39,8 @@ var treasuryOptions = builder.Configuration
 
 builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
+builder.Services.AddMemoryCache();
+
 builder.Services
     .AddHttpClient<ITreasuryRatesClient, TreasuryRatesClient>((serviceProvider, c) =>
     {

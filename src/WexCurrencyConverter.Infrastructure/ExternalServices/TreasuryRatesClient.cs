@@ -1,12 +1,15 @@
 // TreasuryRatesClient.cs
 using System.Globalization;
 using System.Net.Http.Json;
+using Microsoft.Extensions.Caching.Memory;
 using WexCurrencyConverter.Application.Abstractions.Interfaces;
 using WexCurrencyConverter.Application.Models;
 
 namespace WexCurrencyConverter.Infrastructure.ExternalServices;
 
-public sealed class TreasuryRatesClient(HttpClient httpClient) : ITreasuryRatesClient
+public sealed class TreasuryRatesClient(
+    HttpClient httpClient, 
+    IMemoryCache cache) : ITreasuryRatesClient 
 {
     private const string Endpoint =
         "services/api/fiscal_service/v1/accounting/od/rates_of_exchange";
@@ -17,6 +20,12 @@ public sealed class TreasuryRatesClient(HttpClient httpClient) : ITreasuryRatesC
         DateOnly to,
         CancellationToken ct)
     {
+        var cacheKey = $"treasury:{currency}:{from:yyyy-MM-dd}:{to:yyyy-MM-dd}";
+
+        // If cached value exists for the exchange rate, return that
+        if (cache.TryGetValue(cacheKey, out ExchangeRate? cached))
+            return cached;
+
         var encodedCurrency = Uri.EscapeDataString(currency);
 
         var filter =
@@ -31,6 +40,7 @@ public sealed class TreasuryRatesClient(HttpClient httpClient) : ITreasuryRatesC
             $"&sort=-record_date" +
             $"&page[size]=1";
 
+        // If there is no value in cache, call the treasury API
         using var response = await httpClient.GetAsync(url, ct);
         response.EnsureSuccessStatusCode();
 
@@ -63,6 +73,11 @@ public sealed class TreasuryRatesClient(HttpClient httpClient) : ITreasuryRatesC
                 $"for {currency}.");
         }
 
-        return new ExchangeRate(record.CountryCurrencyDesc, rate, effectiveDate);
+        var result = new ExchangeRate(record.CountryCurrencyDesc, rate, effectiveDate);
+        
+        // Store result before returning so next request is a hit
+        cache.Set(cacheKey, result, TimeSpan.FromHours(1));
+
+        return result;
     }
 }
