@@ -1,6 +1,6 @@
-
 using WexCurrencyConverter.Domain.Purchases;
 using WexCurrencyConverter.Domain.Exceptions;
+using FluentAssertions;
 
 namespace WexCurrencyConverter.UnitTests.Domain.Purchases;
 
@@ -11,8 +11,9 @@ public class PurchaseTests
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Assert.Throws<ArgumentException>(() =>
-            Purchase.CreateTransaction(Guid.Empty, "Test Empty Guid", date, 6.75m));
+        Action act = () => Purchase.CreateTransaction(Guid.Empty, "Test Empty Guid", date, 6.75m);
+
+        act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
@@ -26,19 +27,20 @@ public class PurchaseTests
             date,
             6.75m);
 
-        Assert.Equal("Overpriced Artisan Coffee (Oat Milk)", purchase.Description);
-        Assert.Equal(6.75m, purchase.AmountUsd);
-        Assert.Equal(date, purchase.TransactionDate);
+        purchase.Description.Should().Be("Overpriced Artisan Coffee (Oat Milk)");
+        purchase.AmountUsd.Should().Be(6.75m);
+        purchase.TransactionDate.Should().Be(date);
     }
 
     [Fact]
     public void CreateTransaction_WithInvalidCharacterCount_ReturnsArgumentException()
     {
         var date = new DateOnly(2026, 5, 19);
-        var longDescription = new string ('a', 51);
+        var longDescription = new string('a', 51);
 
-        Assert.Throws<InvalidTransactionDescriptionException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), longDescription, date, 6.75m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), longDescription, date, 6.75m);
+
+        act.Should().Throw<InvalidTransactionDescriptionException>();
     }
 
     [Fact]
@@ -49,7 +51,7 @@ public class PurchaseTests
 
         var purchase = Purchase.CreateTransaction(Guid.NewGuid(), atLimit, date, 4.75m);
 
-        Assert.Equal(atLimit, purchase.Description);
+        purchase.Description.Should().Be(atLimit);
     }
 
     [Fact]
@@ -59,7 +61,7 @@ public class PurchaseTests
 
         var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "  Coffee  ", date, 4.75m);
 
-        Assert.Equal("Coffee", purchase.Description);
+        purchase.Description.Should().Be("Coffee");
     }
 
     [Fact]
@@ -67,8 +69,9 @@ public class PurchaseTests
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Assert.Throws<InvalidTransactionDescriptionException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), "", date, 6.75m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "", date, 6.75m);
+
+        act.Should().Throw<InvalidTransactionDescriptionException>();
     }
 
     [Fact]
@@ -77,8 +80,9 @@ public class PurchaseTests
         var today = DateOnly.FromDateTime(DateTime.Now);
         var tomorrow = today.AddDays(1);
 
-        Assert.Throws<InvalidTransactionDateException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), "More Coffee", tomorrow, 4.75m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "More Coffee", tomorrow, 4.75m);
+
+        act.Should().Throw<InvalidTransactionDateException>();
     }
 
     [Fact]
@@ -92,9 +96,9 @@ public class PurchaseTests
             today,
             6.75m);
 
-        Assert.Equal("Overpriced Artisan Coffee (Oat Milk)", purchase.Description);
-        Assert.Equal(6.75m, purchase.AmountUsd);
-        Assert.Equal(today, purchase.TransactionDate);
+        purchase.Description.Should().Be("Overpriced Artisan Coffee (Oat Milk)");
+        purchase.AmountUsd.Should().Be(6.75m);
+        purchase.TransactionDate.Should().Be(today);
     }
 
     [Fact]
@@ -102,8 +106,9 @@ public class PurchaseTests
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Assert.Throws<InvalidPurchaseAmountException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), "Matcha Oat Milk", date, 0m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Matcha Oat Milk", date, 0m);
+
+        act.Should().Throw<InvalidPurchaseAmountException>();
     }
 
     [Fact]
@@ -111,8 +116,9 @@ public class PurchaseTests
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Assert.Throws<InvalidPurchaseAmountException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, -4.75m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, -4.75m);
+
+        act.Should().Throw<InvalidPurchaseAmountException>();
     }
 
     [Fact]
@@ -120,8 +126,8 @@ public class PurchaseTests
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Assert.Throws<InvalidPurchaseAmountException>(() =>
-            Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, 4.755m));
+        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, 4.755m);
+
+        act.Should().Throw<InvalidPurchaseAmountException>();
     }
-    
 }

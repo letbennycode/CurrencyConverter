@@ -31,7 +31,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PurchaseDbContext>();
-    db.Database.Migrate();
+    
+    if (db.Database.IsRelational())    // Only run migrations for Sqlite (Integration Testing)
+        db.Database.Migrate();
 }
 
 // --- Middleware Pipeline ---
@@ -48,3 +50,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
