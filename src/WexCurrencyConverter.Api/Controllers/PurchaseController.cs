@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using WexCurrencyConverter.Application.Abstractions.Interfaces;
 using WexCurrencyConverter.Application.Models;
@@ -9,10 +10,12 @@ namespace WexCurrencyConverter.Api.Controllers;
 public class PurchaseController : ControllerBase
 {
     private readonly IPurchaseService _purchaseService;
+    private readonly ICurrencyConversionService _currencyConversionService;
 
-    public PurchaseController(IPurchaseService purchaseService)
+    public PurchaseController(IPurchaseService purchaseService, ICurrencyConversionService currencyConversionService)
     {
         _purchaseService = purchaseService;
+        _currencyConversionService = currencyConversionService;
     }
 
     [HttpPost]
@@ -27,15 +30,17 @@ public class PurchaseController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(PurchaseResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PurchaseResponse>> GetById(Guid id, CancellationToken ct)
+    [ProducesResponseType(typeof(ConvertedPurchaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
+    public async Task<IActionResult> GetById(  // ← name matches CreatedAtAction
+        Guid id,
+        [FromQuery, Required] string currency,
+        CancellationToken ct)
     {
-        var response = await _purchaseService.GetByIdAsync(id, ct);
-
-        return response is null
-            ? NotFound()
-            : Ok(response);
+        var result = await _currencyConversionService.ConvertAsync(id, currency, ct);
+        return Ok(result);
     }
 
 }

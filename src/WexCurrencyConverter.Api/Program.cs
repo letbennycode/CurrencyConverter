@@ -20,6 +20,8 @@ builder.Services.AddProblemDetails();
 
 // --- Application ---
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+builder.Services.AddScoped<ICurrencyConversionService, CurrencyConversionService>();
 
 // --- Infrastructure ---
 builder.Services.AddDbContext<PurchaseDbContext>(options =>
@@ -35,6 +37,8 @@ var treasuryOptions = builder.Configuration
     .GetSection(TreasuryRatesOptions.SectionName)
     .Get<TreasuryRatesOptions>() ?? new TreasuryRatesOptions();
 
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+
 builder.Services
     .AddHttpClient<ITreasuryRatesClient, TreasuryRatesClient>((serviceProvider, c) =>
     {
@@ -45,8 +49,6 @@ builder.Services
     {
         o.Retry.MaxRetryAttempts = treasuryOptions.RetryCount;
     });
-
-builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
 var app = builder.Build();
 
