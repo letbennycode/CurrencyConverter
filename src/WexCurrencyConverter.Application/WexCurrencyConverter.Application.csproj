@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src/WexCurrencyConverter.Domain/WexCurrencyConverter.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
