@@ -5,6 +5,9 @@ using WexCurrencyConverter.Application.Models;
 
 namespace WexCurrencyConverter.Api.Controllers;
 
+/// <summary>
+/// Handles purchase creation and currency-converted retrieval.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PurchaseController : ControllerBase
@@ -12,6 +15,7 @@ public class PurchaseController : ControllerBase
     private readonly IPurchaseService _purchaseService;
     private readonly ICurrencyConversionService _currencyConversionService;
 
+    /// <inheritdoc />
     public PurchaseController(IPurchaseService purchaseService, ICurrencyConversionService currencyConversionService)
     {
         _purchaseService = purchaseService;
