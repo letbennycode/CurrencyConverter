@@ -5,11 +5,17 @@ using WexCurrencyConverter.Domain.Exceptions;
 
 namespace WexCurrencyConverter.Api.Middleware;
 
+/// <summary>
+/// Maps domain and infrastructure exceptions to appropriate HTTP problem responses.
+/// </summary>
 public class ApiExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<ApiExceptionHandler> _logger;
     private readonly IHostEnvironment _environment;
 
+    /// <summary>
+    /// Initializes the handler with a logger and host environment.
+    /// </summary>
     public ApiExceptionHandler(
         ILogger<ApiExceptionHandler> logger,
         IHostEnvironment environment)
@@ -18,6 +24,10 @@ public class ApiExceptionHandler : IExceptionHandler
         _environment = environment;
     }
 
+    /// <summary>
+    /// Intercepts an unhandled exception and writes a <see cref="ProblemDetails"/> response.
+    /// Returns <c>true</c> to indicate the exception was handled.
+    /// </summary>
     public async ValueTask<bool> TryHandleAsync(
         HttpContext context,
         Exception exception,
