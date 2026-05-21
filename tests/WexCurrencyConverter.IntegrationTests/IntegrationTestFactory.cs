@@ -34,9 +34,10 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>
             foreach (var descriptor in descriptors)
                 services.Remove(descriptor);
 
-            // Replace with unique in-memory database per test
+            // Fixed DB name so all scopes within a test share the same in-memory database  
+            var dbName = $"WexTestDb_{Guid.NewGuid()}";
             services.AddDbContext<PurchaseDbContext>(options =>
-                options.UseInMemoryDatabase($"WexTestDb_{Guid.NewGuid()}"));
+                options.UseInMemoryDatabase(dbName));
 
             // Replace IMemoryCache with fresh instance per test
             var cacheDescriptor = services.SingleOrDefault(d =>
