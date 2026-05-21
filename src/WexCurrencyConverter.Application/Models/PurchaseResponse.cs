@@ -9,7 +9,6 @@ public record PurchaseResponse(
     decimal AmountUsd
 )
 {
-    // Using FromEntity for future flexibility as the entity grows
     public static PurchaseResponse FromEntity(Purchase purchase) => new(
         purchase.Id,
         purchase.Description,

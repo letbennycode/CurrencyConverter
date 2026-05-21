@@ -34,7 +34,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status502BadGateway)]
-    public async Task<IActionResult> GetById(  // ← name matches CreatedAtAction
+    public async Task<IActionResult> GetById(
         Guid id,
         [FromQuery, Required] string currency,
         CancellationToken ct)

@@ -16,19 +16,26 @@ public sealed class CurrencyConversionIntegrationTests : IAsyncLifetime
     private HttpClient _client = null!;
     private WebApplicationFactory<Program> _factory = null!;
 
+    private string _dbPath = null!;
+
     public Task InitializeAsync()
     {
         _wireMock = WireMockServer.Start();
+        _dbPath = $"test_{Guid.NewGuid()}.db";
 
         _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.ConfigureAppConfiguration((_, config) =>
+                builder.ConfigureAppConfiguration((_, config)
+    =>
                 {
-                    config.AddInMemoryCollection(new Dictionary<string, string?>
+                    config.AddInMemoryCollection(new
+    Dictionary<string, string?>
                     {
-                        ["TreasuryRatesClient:BaseAddress"] = _wireMock.Url!,
-                        ["ConnectionStrings:DefaultConnection"] = $"Data Source=test_{Guid.NewGuid()}.db"
+                        ["TreasuryRatesClient:BaseAddress"] =
+    _wireMock.Url!,
+                        ["ConnectionStrings:DefaultConnection"]
+     = $"Data Source={_dbPath}"
                     });
                 });
             });
@@ -42,6 +49,8 @@ public sealed class CurrencyConversionIntegrationTests : IAsyncLifetime
         _wireMock.Stop();
         _client.Dispose();
         await _factory.DisposeAsync();
+        if (File.Exists(_dbPath))
+            File.Delete(_dbPath);
     }
 
     [Fact]

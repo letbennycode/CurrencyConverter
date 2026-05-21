@@ -21,8 +21,8 @@ public sealed class Purchase
 
     public static Purchase CreateTransaction(
         Guid id,
-        string description, 
-        DateOnly transactionDate, 
+        string description,
+        DateOnly transactionDate,
         decimal amountUsd)
     {
         if (Guid.Empty == id)
@@ -35,7 +35,6 @@ public sealed class Purchase
             throw new InvalidTransactionDescriptionException(description, "Description cannot be empty. Please provide a valid description.");
         }
 
-        // Removing any whitespace at the beginning or end of the description so it does not contribute to character limit.
         var descriptionTrimmed = description.Trim();
 
         if (descriptionTrimmed.Length > MaxDescriptionLength)
@@ -43,12 +42,11 @@ public sealed class Purchase
             throw new InvalidTransactionDescriptionException(description, $"Description cannot exceed {MaxDescriptionLength} characters.");
         }
 
-        if (transactionDate > DateOnly.FromDateTime(DateTime.UtcNow)) 
+        if (transactionDate > DateOnly.FromDateTime(DateTime.UtcNow))
         {
             throw new InvalidTransactionDateException(transactionDate);
         }
 
-        // Allowing negative values would enable transactions like refunds
         if (amountUsd <= 0)
         {
             throw new InvalidPurchaseAmountException(amountUsd, "Purchase amount must be positive.");

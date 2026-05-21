@@ -58,7 +58,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PurchaseDbContext>();
 
-    if (db.Database.IsRelational())    // Only run migrations for Sqlite (Integration Testing)
+    if (db.Database.IsRelational())    // Skip for in-memory provider used in tests
         db.Database.Migrate();
 }
 

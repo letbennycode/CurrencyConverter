@@ -1,4 +1,3 @@
-// TreasuryResponse.cs
 using System.Text.Json.Serialization;
 
 namespace WexCurrencyConverter.Infrastructure.ExternalServices;

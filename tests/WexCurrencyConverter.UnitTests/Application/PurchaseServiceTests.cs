@@ -139,10 +139,6 @@ public sealed class PurchaseServiceTests
         await act.Should().ThrowAsync<InvalidTransactionDescriptionException>();
     }
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
     private static CreatePurchaseRequest ValidRequest() => new()
     {
         Description = "Fancy Scone Inc LLC",

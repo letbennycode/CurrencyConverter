@@ -18,7 +18,6 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
         _client = factory.CreateClient();
     }
 
-    // Validate happy path - 201
     [Fact]
     public async Task PostPurchase_ValidRequest_Returns201WithMatchingBody()
     {
@@ -38,7 +37,6 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
         body.Id.Should().NotBeEmpty();
     }
 
-    // Validate any failures
     [Fact]
     public async Task PostPurchase_MissingDescription_Returns400()
     {
@@ -117,7 +115,6 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
         response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
     }
 
-    // Verify data persistence to DB
     [Fact]
     public async Task PostPurchase_ValidRequest_PersistsToDatabase()
     {
@@ -128,7 +125,6 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
         var response = await _client.PostAsJsonAsync("/api/purchase", request);
         var body = await response.Content.ReadFromJsonAsync<PurchaseResponse>();
 
-        // Assert — resolve the DbContext directly and query for the record
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<PurchaseDbContext>();
 
@@ -139,10 +135,6 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
         saved.AmountUsd.Should().Be(request.AmountUsd);
         saved.TransactionDate.Should().Be(request.TransactionDate);
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private static CreatePurchaseRequest ValidRequest() => new()
     {

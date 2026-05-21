@@ -1,4 +1,3 @@
-// Domain/Exceptions/ExchangeRateUnavailableException.cs
 namespace WexCurrencyConverter.Domain.Exceptions;
 
 public sealed class ExchangeRateUnavailableException(string currency, DateOnly transactionDate)

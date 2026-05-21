@@ -1,4 +1,3 @@
-// Application/Models/ConvertedPurchaseResponse.cs
 namespace WexCurrencyConverter.Application.Models;
 
 public sealed record ConvertedPurchaseResponse(
