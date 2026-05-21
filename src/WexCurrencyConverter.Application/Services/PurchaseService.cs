@@ -28,9 +28,4 @@ public class PurchaseService : IPurchaseService
 
         return PurchaseResponse.FromEntity(saved);
     }
-
-    public Task<PurchaseResponse?> GetByIdAsync(Guid id, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -6,15 +6,6 @@ namespace WexCurrencyConverter.UnitTests.Domain.Purchases;
 
 public class PurchaseTests
 {
-    [Fact]
-    public void CreateTransaction_WithEmptyId_ReturnsArgumentException()
-    {
-        var date = new DateOnly(2026, 5, 19);
-
-        Action act = () => Purchase.CreateTransaction(Guid.Empty, "Test Empty Guid", date, 6.75m);
-
-        act.Should().Throw<ArgumentException>();
-    }
 
     [Fact]
     public void CreateTransaction_WithValidInputs_ReturnsExpectedPurchase()
@@ -33,7 +24,17 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void CreateTransaction_WithInvalidCharacterCount_ReturnsArgumentException()
+    public void CreateTransaction_WithEmptyId_ThrowsArgumentException()
+    {
+        var date = new DateOnly(2026, 5, 19);
+
+        Action act = () => Purchase.CreateTransaction(Guid.Empty, "Test Empty Guid", date, 6.75m);
+
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void CreateTransaction_WithInvalidCharacterCount_ThrowsArgumentException()
     {
         var date = new DateOnly(2026, 5, 19);
         var longDescription = new string('a', 51);
@@ -65,7 +66,7 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void CreateTransaction_WithNullDescription_ThrowsArgumentOutOfRangeException()
+    public void CreateTransaction_WithEmptyDescription_ThrowsInvalidTransactionDescriptionException()
     {
         var date = new DateOnly(2026, 5, 19);
 
@@ -102,7 +103,7 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void CreateTransaction_WithZeroAmount_InvalidPurchaseAmountException()
+    public void CreateTransaction_WithZeroAmount_ThrowsInvalidPurchaseAmountException()
     {
         var date = new DateOnly(2026, 5, 19);
 

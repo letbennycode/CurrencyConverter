@@ -20,7 +20,6 @@ builder.Services.AddProblemDetails();
 
 // --- Application ---
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
-builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<ICurrencyConversionService, CurrencyConversionService>();
 
 // --- Infrastructure ---

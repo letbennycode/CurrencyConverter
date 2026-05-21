@@ -1,4 +1,3 @@
-// Application/Abstractions/ICurrencyConversionService.cs
 using WexCurrencyConverter.Application.Models;
 
 namespace WexCurrencyConverter.Application.Abstractions.Interfaces;

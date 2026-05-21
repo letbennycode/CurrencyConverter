@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace WexCurrencyConverter.Infrastructure.ExternalServices;
+
 public sealed class TreasuryRatesOptions
 {
     public const string SectionName = "TreasuryRatesClient";

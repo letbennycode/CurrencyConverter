@@ -43,12 +43,6 @@ public sealed class Purchase
             throw new InvalidTransactionDescriptionException(description, $"Description cannot exceed {MaxDescriptionLength} characters.");
         }
 
-        // We are specifically ensuring that the date is not set in the future. 
-        // NOTE: We can only perform conversions within the last 6 months, but there is nothing specifying
-        // that we can't store them at a minimum, so we don't validate that date here.
-        // TO-DO: Finding an API that allows for more historic conversion rates or
-        // determining with my team if we'd rather prevent these from being stored,
-        // eliminating confusion when retrieving transactions
         if (transactionDate > DateOnly.FromDateTime(DateTime.UtcNow)) 
         {
             throw new InvalidTransactionDateException(transactionDate);

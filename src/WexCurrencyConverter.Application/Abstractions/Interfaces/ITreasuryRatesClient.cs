@@ -4,5 +4,5 @@ namespace WexCurrencyConverter.Application.Abstractions.Interfaces;
 
 public interface ITreasuryRatesClient
 {
-    Task<ExchangeRate?> GetRateAsync(string currency, DateOnly onOrBefore, DateOnly notEarlierThan, CancellationToken ct);
+    Task<ExchangeRate?> GetRateAsync(string currency, DateOnly from, DateOnly to, CancellationToken ct);
 }

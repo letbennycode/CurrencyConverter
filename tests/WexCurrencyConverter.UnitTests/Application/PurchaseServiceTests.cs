@@ -139,16 +139,6 @@ public sealed class PurchaseServiceTests
         await act.Should().ThrowAsync<InvalidTransactionDescriptionException>();
     }
 
-    [Fact]
-    public async Task GetByIdAsync_AnyId_ThrowsNotImplementedException()
-    {
-        // Act
-        var act = () => _sut.GetByIdAsync(Guid.NewGuid(), _ct);
-
-        // Assert
-        await act.Should().ThrowAsync<NotImplementedException>();
-    }
-
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
