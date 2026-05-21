@@ -33,10 +33,6 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-var treasuryOptions = builder.Configuration
-    .GetSection(TreasuryRatesOptions.SectionName)
-    .Get<TreasuryRatesOptions>() ?? new TreasuryRatesOptions();
-
 builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
 builder.Services.AddMemoryCache();
@@ -44,12 +40,16 @@ builder.Services.AddMemoryCache();
 builder.Services
     .AddHttpClient<ITreasuryRatesClient, TreasuryRatesClient>((serviceProvider, c) =>
     {
+        var treasuryOptions = serviceProvider.GetRequiredService<IOptions<TreasuryRatesOptions>>().Value;
         c.BaseAddress = new Uri(treasuryOptions.BaseAddress);
         c.Timeout = TimeSpan.FromSeconds(treasuryOptions.TimeoutSeconds);
     })
     .AddStandardResilienceHandler(o =>
     {
-        o.Retry.MaxRetryAttempts = treasuryOptions.RetryCount;
+        var retryCount = builder.Configuration
+            .GetSection(TreasuryRatesOptions.SectionName)
+            .GetValue<int?>("RetryCount") ?? new TreasuryRatesOptions().RetryCount;
+        o.Retry.MaxRetryAttempts = retryCount;
     });
 
 var app = builder.Build();

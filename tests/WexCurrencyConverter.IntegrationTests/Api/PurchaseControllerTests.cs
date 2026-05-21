@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WexCurrencyConverter.Application.Models;
 using WexCurrencyConverter.Infrastructure.Persistence;
 
-namespace WexCurrencyConverter.IntegrationTests;
+namespace WexCurrencyConverter.IntegrationTests.Api;
 
 public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
 {
@@ -108,7 +108,7 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
     public async Task PostPurchase_FutureTransactionDate_Returns422()
     {
         // Arrange
-        var request = ValidRequest() with { TransactionDate = DateOnly.FromDateTime(DateTime.Now).AddDays(1) };
+        var request = ValidRequest() with { TransactionDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1) };
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/purchase", request);
@@ -147,7 +147,7 @@ public class PurchaseControllerTests : IClassFixture<IntegrationTestFactory>
     private static CreatePurchaseRequest ValidRequest() => new()
     {
         Description = "Powdered French Toast (Sensing a Theme Here)",
-        TransactionDate = DateOnly.FromDateTime(DateTime.Now),
+        TransactionDate = DateOnly.FromDateTime(DateTime.UtcNow),
         AmountUsd = 49.99m
     };
 }

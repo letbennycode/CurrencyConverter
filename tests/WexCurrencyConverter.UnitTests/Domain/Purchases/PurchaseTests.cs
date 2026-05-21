@@ -77,7 +77,7 @@ public class PurchaseTests
     [Fact]
     public void CreateTransaction_WithFutureDate_ThrowsInvalidTransactionDateException()
     {
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var tomorrow = today.AddDays(1);
 
         Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "More Coffee", tomorrow, 4.75m);
@@ -88,7 +88,7 @@ public class PurchaseTests
     [Fact]
     public void CreateTransaction_WithCurrentDate_ReturnsExpectedPurchase()
     {
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         var purchase = Purchase.CreateTransaction(
             Guid.NewGuid(),

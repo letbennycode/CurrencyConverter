@@ -6,9 +6,9 @@ using WexCurrencyConverter.Application.Services;
 using WexCurrencyConverter.Domain.Exceptions;
 using WexCurrencyConverter.Domain.Purchases;
 
-namespace WexCurrencyConverter.UnitTests.Application.Purchases;
+namespace WexCurrencyConverter.UnitTests.Application;
 
-public class PurchaseServiceTests
+public sealed class PurchaseServiceTests
 {
     private readonly Mock<IPurchaseRepository> _repositoryMock;
     private readonly PurchaseService _sut;
@@ -103,7 +103,7 @@ public class PurchaseServiceTests
     public async Task CreateAsync_FutureTransactionDate_ThrowsInvalidTransactionDateException()
     {
         // Arrange
-        var tomorrow = DateOnly.FromDateTime(DateTime.Now).AddDays(1);
+        var tomorrow = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1);
         var request = ValidRequest() with { TransactionDate = tomorrow };
 
         // Act
