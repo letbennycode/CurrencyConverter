@@ -204,3 +204,15 @@ dotnet test
 - The Treasury base URL is not a secret, but any API key or connection string for a real database should come from environment variables or a secrets manager like Azure Key Vault, not `appsettings.json`.
 - Switch to an actual relational
 - A relational DB like SQL would make sense for this, storing transactions with a well-defined schema. I could see CosmosDB being useful in the case of high-write throughput or the need for extremely low latency on a global system, but that's not needed here especially in a small production use case.
+- Could use FluentValidation to validate incoming request models, which adds a nice swagger validation
+- Add handling for DB-specific exceptions, like dbConcurrency, primary keys, etc.
+- Sqlite doesn't have concurrent write support, so you'd want to scale this with something like SQL Server
+
+## Security Concerns
+
+- This is a low PII application, but if we ever stored user data beyond this, that would need to be secured (DB Encryption)
+- Exception handlers hide internal details
+- Authentication via JWT bearer tokens or client certificates
+- Rate limiting to prevent treasury API from being overran with requests
+- Currency string validations to make sure we don't get garbage input for that
+- Distributed cache (Redis) so that multiple instances can have access to it
