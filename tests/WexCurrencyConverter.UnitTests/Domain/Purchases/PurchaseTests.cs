@@ -8,11 +8,11 @@ public class PurchaseTests
 {
 
     [Fact]
-    public void CreateTransaction_WithValidInputs_ReturnsExpectedPurchase()
+    public void Create_WithValidInputs_ReturnsExpectedPurchase()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        var purchase = Purchase.CreateTransaction(
+        var purchase = Purchase.Create(
             Guid.NewGuid(),
             "Overpriced Artisan Coffee (Oat Milk)",
             date,
@@ -24,74 +24,74 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void CreateTransaction_WithEmptyId_ThrowsArgumentException()
+    public void Create_WithEmptyId_ThrowsArgumentException()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Action act = () => Purchase.CreateTransaction(Guid.Empty, "Test Empty Guid", date, 6.75m);
+        Action act = () => Purchase.Create(Guid.Empty, "Test Empty Guid", date, 6.75m);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithInvalidCharacterCount_ThrowsArgumentException()
+    public void Create_WithInvalidCharacterCount_ThrowsArgumentException()
     {
         var date = new DateOnly(2026, 5, 19);
         var longDescription = new string('a', 51);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), longDescription, date, 6.75m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), longDescription, date, 6.75m);
 
         act.Should().Throw<InvalidTransactionDescriptionException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithDescriptionAtMaxLength_Succeeds()
+    public void Create_WithDescriptionAtMaxLength_Succeeds()
     {
         var date = new DateOnly(2026, 5, 19);
         var atLimit = new string('a', 50);
 
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), atLimit, date, 4.75m);
+        var purchase = Purchase.Create(Guid.NewGuid(), atLimit, date, 4.75m);
 
         purchase.Description.Should().Be(atLimit);
     }
 
     [Fact]
-    public void CreateTransaction_TrimsDescriptionWhitespace()
+    public void Create_TrimsDescriptionWhitespace()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "  Coffee  ", date, 4.75m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "  Coffee  ", date, 4.75m);
 
         purchase.Description.Should().Be("Coffee");
     }
 
     [Fact]
-    public void CreateTransaction_WithEmptyDescription_ThrowsInvalidTransactionDescriptionException()
+    public void Create_WithEmptyDescription_ThrowsInvalidTransactionDescriptionException()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "", date, 6.75m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), "", date, 6.75m);
 
         act.Should().Throw<InvalidTransactionDescriptionException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithFutureDate_ThrowsInvalidTransactionDateException()
+    public void Create_WithFutureDate_ThrowsInvalidTransactionDateException()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var tomorrow = today.AddDays(1);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "More Coffee", tomorrow, 4.75m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), "More Coffee", tomorrow, 4.75m);
 
         act.Should().Throw<InvalidTransactionDateException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithCurrentDate_ReturnsExpectedPurchase()
+    public void Create_WithCurrentDate_ReturnsExpectedPurchase()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        var purchase = Purchase.CreateTransaction(
+        var purchase = Purchase.Create(
             Guid.NewGuid(),
             "Overpriced Artisan Coffee (Oat Milk)",
             today,
@@ -103,31 +103,31 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void CreateTransaction_WithZeroAmount_ThrowsInvalidPurchaseAmountException()
+    public void Create_WithZeroAmount_ThrowsInvalidPurchaseAmountException()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Matcha Oat Milk", date, 0m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), "Matcha Oat Milk", date, 0m);
 
         act.Should().Throw<InvalidPurchaseAmountException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithNegativeAmount_ThrowsInvalidPurchaseAmountException()
+    public void Create_WithNegativeAmount_ThrowsInvalidPurchaseAmountException()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, -4.75m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), "Coffee", date, -4.75m);
 
         act.Should().Throw<InvalidPurchaseAmountException>();
     }
 
     [Fact]
-    public void CreateTransaction_WithMoreThanTwoDecimalPlaces_ThrowsInvalidPurchaseAmountException()
+    public void Create_WithMoreThanTwoDecimalPlaces_ThrowsInvalidPurchaseAmountException()
     {
         var date = new DateOnly(2026, 5, 19);
 
-        Action act = () => Purchase.CreateTransaction(Guid.NewGuid(), "Coffee", date, 4.755m);
+        Action act = () => Purchase.Create(Guid.NewGuid(), "Coffee", date, 4.755m);
 
         act.Should().Throw<InvalidPurchaseAmountException>();
     }

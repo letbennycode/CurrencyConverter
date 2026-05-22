@@ -23,7 +23,7 @@ public sealed class CurrencyConversionServiceTests
     public async Task ConvertAsync_ValidRequest_ReturnsCorrectConvertedAmount()
     {
         // Arrange
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
         var rate = new ExchangeRate("Canada-Dollar", 1.35m, new DateOnly(2024, 1, 1));
 
         _repository.GetByIdAsync(purchase.Id, Arg.Any<CancellationToken>())
@@ -65,7 +65,7 @@ public sealed class CurrencyConversionServiceTests
     public async Task ConvertAsync_RateUnavailable_ThrowsExchangeRateUnavailableException()
     {
         // Arrange
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
         _repository.GetByIdAsync(purchase.Id, Arg.Any<CancellationToken>())
             .Returns(purchase);
 
@@ -88,7 +88,7 @@ public sealed class CurrencyConversionServiceTests
     {
         // Arrange
         var transactionDate = new DateOnly(2024, 1, 15);
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "Test purchase", transactionDate, 100m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "Test purchase", transactionDate, 100m);
         var rate = new ExchangeRate("Canada-Dollar", 1.35m, transactionDate);
 
         _repository.GetByIdAsync(purchase.Id, Arg.Any<CancellationToken>())
@@ -115,7 +115,7 @@ public sealed class CurrencyConversionServiceTests
     [Fact]
     public async Task ConvertAsync_MidpointAmount_RoundsProperlyToTwoDecimals()
     {
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "Test purchase", new DateOnly(2024, 1, 15), 100m);
         var rate = new ExchangeRate("Canada-Dollar", 1.005m, new DateOnly(2024, 1, 1));
 
         _repository.GetByIdAsync(purchase.Id, Arg.Any<CancellationToken>())
@@ -140,7 +140,7 @@ public sealed class CurrencyConversionServiceTests
     {
         // Arrange
         var transactionDate = new DateOnly(2024, 1, 15);
-        var purchase = Purchase.CreateTransaction(Guid.NewGuid(), "Coffee Run", transactionDate, 50m);
+        var purchase = Purchase.Create(Guid.NewGuid(), "Coffee Run", transactionDate, 50m);
         var rateDate = new DateOnly(2024, 1, 1);
         var rate = new ExchangeRate("Canada-Dollar", 1.35m, rateDate);
 

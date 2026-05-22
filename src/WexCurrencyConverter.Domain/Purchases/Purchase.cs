@@ -19,7 +19,7 @@ public sealed class Purchase
         AmountUsd = amountUsd;
     }
 
-    public static Purchase CreateTransaction(
+    public static Purchase Create(
         Guid id,
         string description,
         DateOnly transactionDate,

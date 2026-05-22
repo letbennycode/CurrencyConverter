@@ -17,7 +17,7 @@ public class PurchaseService : IPurchaseService
         CreatePurchaseRequest request,
         CancellationToken ct)
     {
-        var purchase = Purchase.CreateTransaction(
+        var purchase = Purchase.Create(
             Guid.NewGuid(),
             request.Description,
             request.TransactionDate,
