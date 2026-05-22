@@ -66,4 +66,27 @@ public class PurchaseController : ControllerBase
         var result = await _currencyConversionService.ConvertAsync(id, currency, ct);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Retrieves total sum of purchases for a date set.
+    /// </summary>
+    /// <param name="from">
+    /// From Date
+    /// </param>
+    /// <param name="to">
+    /// To Date
+    /// </param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The value of transactions from one point in time to another.</returns>
+    [HttpGet("total")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMonthlyTotal(
+        DateOnly from,
+        DateOnly to,
+        CancellationToken ct)
+    {
+        var result = await _purchaseService.GetMonthlyTotal(from, to, ct);
+        return Ok(result);
+    }
+ 
 }

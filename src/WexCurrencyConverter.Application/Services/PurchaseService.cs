@@ -28,4 +28,17 @@ public class PurchaseService : IPurchaseService
 
         return PurchaseResponse.FromEntity(saved);
     }
+
+    public async Task<decimal> GetMonthlyTotal(DateOnly from, DateOnly to, CancellationToken ct)
+    {
+        decimal monthlySum = 0m;
+        var purchases = await _repository.GetAllTransactionsAsync(ct);
+
+        purchases.ForEach(x =>
+        {
+            monthlySum += x.AmountUsd;
+        });
+
+        return monthlySum;
+    }
 }

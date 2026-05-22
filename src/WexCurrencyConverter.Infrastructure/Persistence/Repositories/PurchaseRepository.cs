@@ -19,4 +19,7 @@ public class PurchaseRepository : IPurchaseRepository
 
     public Task<Purchase?> GetByIdAsync(Guid id, CancellationToken ct) =>
         _db.Purchases.FirstOrDefaultAsync(p => p.Id == id, ct);
+
+    public Task<List<Purchase>> GetAllTransactionsAsync(CancellationToken ct) =>
+        _db.Purchases.ToListAsync(ct);
 }
